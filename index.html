@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do List</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1>To-Do List</h1>
+    <form id="todoForm">
+      <div class="mb-3">
+        <label for="taskInput" class="form-label">Task</label>
+        <input type="text" class="form-control" id="taskInput" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Task</button>
+    </form>
+    <table class="table mt-3">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Task</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="todoList">
+      
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bootstrap JS and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      let todos = [];
+
+      // Function to render todo list
+      function renderTodoList() {
+        $("#todoList").empty();
+        todos.forEach(todo => {
+          $("#todoList").append(`
+            <tr>
+              <td>${todo.id}</td>
+              <td>${todo.task}</td>
+              <td>${todo.status}</td>
+              <td>
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteTask(${todo.id})">Delete</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="updateTask(${todo.id})">Update</button>
+              </td>
+            </tr>
+          `);
+        });
+      }
+
+      // Function to add a new task
+      $("#todoForm").submit(function(event) {
+        event.preventDefault();
+        let task = $("#taskInput").val();
+        if (task.trim() !== "") {
+          let newTodo = {
+            id: todos.length + 1,
+            task: task,
+            status: "Pending"
+          };
+          todos.push(newTodo);
+          renderTodoList();
+          $("#taskInput").val("");
+        }
+      });
+
+      // Function to delete a task
+      window.deleteTask = function(id) {
+        todos = todos.filter(todo => todo.id !== id);
+        renderTodoList();
+      };
+
+      // Function to update task status
+      window.updateTask = function(id) {
+        let index = todos.findIndex(todo => todo.id === id);
+        if (index !== -1) {
+          if (todos[index].status === "Pending") {
+            todos[index].status = "Completed";
+          } else {
+            todos[index].status = "Pending";
+          }
+          renderTodoList();
+        }
+      };
+    });
+  </script>
+</body>
+</html>
